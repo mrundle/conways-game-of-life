@@ -91,17 +91,12 @@ board_free(struct board *const b)
 }
 
 int
-board_printw(struct board *const b)
+board_print(struct board_iterator *const iter)
 {
-    if (!b) {
-        err("bad input");
-        return -EINVAL;
-    }
-    for (int y = 0; y < b->nrows; y++) {
-        for (int x = 0; x < b->ncols; x++) {
-            mvprintw(y, x, b->board[y][x].cur_state ? "X" : ".");
-        }
-    }
+    mvprintw(iter->y, iter->x,
+        iter->board->board[iter->y][iter->x].cur_state
+            ? "X"
+            : ".");
     return 0;
 }
 
@@ -168,6 +163,9 @@ int main(void)
 {
     /* start curses mode */
     WINDOW *window = initscr();
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+    init_pair(2, COLOR_BLACK, COLOR_WHITE);
 
     int maxx, maxy;
     getmaxyx(window, maxy, maxx);
@@ -182,14 +180,56 @@ int main(void)
     /* randomize board */
     board_run(b, board_randomize_square);
 
+    bool on = true;
+    int ch = 0;
+    nodelay(window, true); /* nonblocking getch() calls */
+    noecho(); /* do not echo characters */
+    curs_set(0); /* hide cursor */
+
+    unsigned sleep_ms = 500;
+    unsigned sleep_ms_modifier = 50;
+    unsigned iterations = 0;
+
     /* run the game */
     while (true) {
-        board_printw(b);
-        refresh(); /* flush to the screen */
-        board_run(b, board_compute_next_generation);
-        board_run(b, board_promote_next_generation);
-        msleep(500);
-        //getch(); /* get user input (TODO) */
+        if (on) {
+            iterations += 1;
+            board_run(b, board_compute_next_generation);
+            board_run(b, board_promote_next_generation);
+            attron(COLOR_PAIR(1));
+            board_run(b, board_print);
+            attron(COLOR_PAIR(2));
+            printw(
+                "Status = %s (press 's' to toggle), "
+                "Delay = %u ms (modify with '>' '<'), "
+                "Iterations = %u, "
+                "Press 'r' to randomize",
+                on ? "running" : "paused",
+                sleep_ms,
+                iterations);
+            refresh(); /* flush to the screen */
+        }
+        msleep(sleep_ms);
+        ch = getch();
+        switch (ch) {
+            case '>':
+            case KEY_RIGHT:
+                sleep_ms += sleep_ms_modifier;
+                break;
+            case '<':
+            case KEY_LEFT:
+                sleep_ms = sleep_ms > sleep_ms_modifier
+                    ? sleep_ms - sleep_ms_modifier : 0;
+                break;
+            case 's':
+                on = !on;
+                break;
+            case 'r':
+                board_run(b, board_randomize_square);
+                break;
+            default:
+                break;
+        }
     }
 
     endwin();  /* end curses mode */
