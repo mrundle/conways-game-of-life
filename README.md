@@ -1,4 +1,4 @@
-# Conway's Game of Life
+# Conway's Game of Life [![C/C++ CI](https://github.com/mrundle/conways-game-of-life/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/mrundle/conways-game-of-life/actions/workflows/c-cpp.yml)
 
 This package implement's Conway's Game of Life in C, using `ncurses` to
 write the grid to the terminal.
