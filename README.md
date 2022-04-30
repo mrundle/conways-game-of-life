@@ -1,9 +1,9 @@
-= Conway's Game of Life =
+# Conway's Game of Life
 
 This package implement's Conway's Game of Life in C, using `ncurses` to
 write the grid to the terminal.
 
-== Dependencies ==
+## Dependencies
 
 This tool is targted for Unix-style environments and needs the following
 tools/packages installed.
@@ -12,9 +12,9 @@ tools/packages installed.
 * `ncurses-libs`
 * `ncurses-devel`
 
-== Usage ==
+## Usage
 
-=== Building ===
+### Building
 
 To build the `./life` executable, simply run:
 
@@ -22,7 +22,7 @@ To build the `./life` executable, simply run:
 make
 ```
 
-=== Running ===
+### Running
 
 ```
 ./life
@@ -48,13 +48,13 @@ X..X.....X.X......................................
 .........XX....XX........................X.....XX.
 ```
 
-== Next? ==
+## Next?
 
 The following features would be nice to implement:
 
 * Controls, via an overlay window displaying options
- * Start the game
- * Stop the game
- * Step forward one generation
- * Modify the generation delay from the default 500ms
+  * Start the game
+  * Stop the game
+  * Step forward one generation
+  * Modify the generation delay from the default 500ms
 * Saving and loading state
