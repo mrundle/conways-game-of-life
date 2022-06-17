@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 #include <unistd.h>
 
@@ -159,6 +160,14 @@ board_randomize_square(struct board_iterator *const iter)
     return 0;
 }
 
+static void
+seed_rand(void)
+{
+    time_t t;
+    time(&t);
+    srand(t);
+}
+
 int main(void)
 {
     /* start curses mode */
@@ -178,6 +187,7 @@ int main(void)
     }
 
     /* randomize board */
+    seed_rand();
     board_run(b, board_randomize_square);
 
     bool on = true;
@@ -186,7 +196,7 @@ int main(void)
     noecho(); /* do not echo characters */
     curs_set(0); /* hide cursor */
 
-    unsigned sleep_ms = 500;
+    unsigned sleep_ms = 50;
     unsigned sleep_ms_modifier = 50;
     unsigned iterations = 0;
 
